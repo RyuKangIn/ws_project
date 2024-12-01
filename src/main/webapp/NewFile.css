@@ -61,13 +61,6 @@
         #navbar .auth-buttons {
             margin-left: auto;
         }
-        main {
-            display: flex;
-            justify-content: center; /* 가로 정중앙 */
-            align-items: center; /* 세로 정중앙 */
-            height: 100vh; /* 화면 높이 */
-            background-color: #f9f9f9; /* 배경색 */
-        }
         .login-container {
             text-align: center; /* 텍스트 중앙 정렬 */
             background: #fff; /* 흰색 배경 */
@@ -77,6 +70,14 @@
             width: 50%; /* 너비를 60%로 설정하여 가로로 길게 */
     		max-width: 600px; /* 최대 너비 제한 */
         }
+        main {
+            display: flex;
+            justify-content: center; /* 가로 정중앙 */
+            align-items: center; /* 세로 정중앙 */
+            height: 100vh; /* 화면 높이 */
+            background-color: #f9f9f9; /* 배경색 */
+        }
+        
          .board-list {
             flex: 2;
             margin-right: 20px;

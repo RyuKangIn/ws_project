@@ -9,15 +9,16 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.ResultSet;
+import java.util.*;
+
 /**
  * Servlet implementation class controlTimeTable
  */
 
 public class controlTimeTable extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final String DB_URL = "jdbc:mysql://localhost:3306/jspdb?useSSL=false&serverTimezone=UTC";
+	private static final String DB_URL = "jdbc:mysql://localhost:3306/ws_db?useSSL=false&serverTimezone=UTC";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "alslvk123";
     /**
@@ -31,27 +32,55 @@ public class controlTimeTable extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-		String user_id = (String)session.getAttribute("user_id");
-		List<String> days = Arrays.asList("월", "화", "수", "목", "금");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+
+        int user_id = (int) session.getAttribute("user_id");
+        Map<String, ArrayList<String>> timetable = new HashMap<>();
+        String[] days = {"월", "화", "수", "목", "금"};
         
-		try {
-        	Class.forName("com.mysql.cj.jdbc.Driver");
-        	try(Connection conn = DriverManager.getConnection(DB_URL,DB_USER,DB_PASSWORD)){
-        		String query = "select * from timetable where userid = ?";
-        		try(PreparedStatement stmt = conn.prepareStatement(query)){
-        			stmt.setString(1, user_id);
-        			}
-        		}
-        	
-        }catch() {
-        	
+        // Map 초기화
+        for (String day : days) {
+            timetable.put(day, new ArrayList<>());
+            for (int i = 0; i < 12; i++) {
+                timetable.get(day).add("-");
+            }
         }
         
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/viewTimeTable.jsp");
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+                String query = "SELECT day, lec_name, start_time, end_time FROM timetable WHERE user_id = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                    stmt.setInt(1, user_id);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        while (rs.next()) {
+                            String day = rs.getString("day");
+                            String lecName = rs.getString("lec_name");
+                            int startTime = rs.getInt("start_time");
+                            int endTime = rs.getInt("end_time");
+                            
+                            for (int i = startTime - 1; i < endTime; i++) {
+                                timetable.get(day).set(i, lecName);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMsg", "시간표를 가져오는 도중 문제가 발생했습니다.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/error.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
+
+        // JSP에 데이터 전달
+        request.setAttribute("timetable", timetable);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/viewTimeTable.jsp");
         dispatcher.forward(request, response);
-	}
+    }
+
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

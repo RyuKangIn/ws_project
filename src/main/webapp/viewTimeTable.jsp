@@ -13,16 +13,8 @@ margin-top: 80px;
 
 </head>
 <body> 
-	<div id="navbar">
-            <button onclick="location.href='/ws_project/mainpage.html'">홈</button>
-        	<button onclick="location.href='/ws_project/timetable'">시간표</button>
-        	<button onclick="location.href='/ws_project/menu'">학식</button>
-        	<button onclick="location.href='#'">쪽지</button>
-            <div class="auth-buttons">
-                <button onclick="location.href='/ws_project/mypage.html'">마이페이지</button>
-                <button onclick="location.href='#'">로그아웃</button>
-            </div>
-            </div>
+	
+<%@include file="navbar.jsp" %> 
 <div class="main-container">
     <!-- 시간표 -->
     <div class="table-container">
@@ -38,7 +30,7 @@ margin-top: 80px;
             <c:forEach var="i" begin="1" end="12">
                 <tr>
                     <td>${i}교시</td>
-                    <c:forEach var="day" items="${days}">
+                    <c:forEach var="day" items="${['월', '화', '수', '목', '금']}">
                         <td>
                             <c:out value="${timetable[day][i - 1]}" default="-"/>
                         </td>

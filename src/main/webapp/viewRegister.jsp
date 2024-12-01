@@ -51,17 +51,19 @@
         }
     </script>
     <style>
-    body {		
-			padding: 0;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
+body {
+    display: flex;
+    justify-content: center; /* 가로 중앙 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    height: 100vh; /* 화면 전체 높이를 사용 */
+    margin: 0; /* 여백 제거 */
+    background-color: #f0f0f0; /* 배경색 추가 (선택 사항) */
+}
     </style>
 </head>
 <body>
-<main>
-    <div>
+
+    <div class="login-container">
         <h2>회원가입</h2>
         <form action="/ws_project/adduser" method="post" onsubmit="validateForm(event)">
             <label class="userid">
@@ -80,6 +82,6 @@
             <button type="submit">회원가입</button>
         </form>
     </div>
-    </main>
+
 </body>
 </html>

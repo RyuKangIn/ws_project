@@ -15,7 +15,7 @@ public class controlLogin extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // DB 연결 정보
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/jspdb?useSSL=false&serverTimezone=UTC";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/ws_db?useSSL=false&serverTimezone=UTC";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "alslvk123";
 
@@ -39,7 +39,10 @@ public class controlLogin extends HttpServlet {
                             loginSuccess = true; // 로그인 성공
                             int userId = rs.getInt("user_id");
                             HttpSession session = request.getSession();
-                            session.setAttribute("userid", userId);
+                            session.setAttribute("user_id", userId);
+                            System.out.println("Session ID: " + session.getId());
+                            System.out.println("User ID in session: " + session.getAttribute("user_id"));
+
                         }
                     }
                 }
@@ -53,7 +56,7 @@ public class controlLogin extends HttpServlet {
 
         // 로그인 성공 여부에 따른 처리
         if (loginSuccess) {
-            response.sendRedirect("/ws_project/mainpage.html"); 
+            response.sendRedirect("/ws_project/main.jsp"); 
         } else {
             response.setContentType("text/html; charset=UTF-8");
             response.getWriter().write("<script>alert('아이디 또는 비밀번호를 다시 확인해주세요.'); history.back();</script>");

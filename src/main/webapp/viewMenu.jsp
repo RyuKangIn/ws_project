@@ -1,9 +1,29 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="java.util.List" %>
+<%@ page import="java.sql.*" %>
+
 <%
-    List<String> imgSrcList = (List<String>) request.getAttribute("imageSrcList");
+String dbUrl = "jdbc:mysql://localhost:3306/ws_db";
+String username = "root";
+String password = "alslvk123";
+String tip = null; // 초기화
+String e_ = null;   // 초기화
+Class.forName("com.mysql.cj.jdbc.Driver");
+try (Connection conn = DriverManager.getConnection(dbUrl, username, password)) {
+    String sql = "SELECT src FROM menu ORDER BY id";
+    PreparedStatement pstmt = conn.prepareStatement(sql);
+    ResultSet rs = pstmt.executeQuery();
+    
+    rs.next();
+    tip = rs.getString("src");
+    rs.next();
+    e_ = rs.getString("src");
+} catch (Exception e) {
+	e.printStackTrace();
+}
 %>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,35 +44,11 @@ body {
 </head>
 <body>
 
-    <div id="navbar">
-            <button onclick="location.href='#'">홈</button>
-            
-            <button onclick="location.href='#'">시간표</button>
-            <button onclick="location.href='#'">학식</button>
-            <button onclick="location.href='#'">쪽지</button>
-            <div class="auth-buttons">
-            	<button onclick="location.href='#'">마이페이지</button>
-                <button onclick="location.href='#'">로그아웃</button>
-            </div>
-        </div>
-<img src="//contents.kpu.ac.kr/contents/U/U2Q/U2QZ8Z1KW6ZL/images/scale1/XLXPNZ76AA09.jpg" alt="Menu Image" style="width:600px; height:auto;"/><br>
-    <%
-        if (imgSrcList != null) {
-            String tip = imgSrcList.get(0);
-            String e = imgSrcList.get(1);
-            
-    %>
-    			<h5> TIP 학생 식당</h5>
-                <img src="contents.kpu.ac.kr/contents/U/U2Q/U2QZ8Z1KW6ZL/images/scale1/XLXPNZ76AA09.jpg" alt="Menu Image" style="width:600px; height:auto;"/><br>
-                <!-- <img src="" alt="Menu Image" style="width:600px; height:auto;"/> -->
-    <%
-        } 
-        else {
-    %>
-        <p>이미지를 불러올 수 없습니다.</p>
-    <%
-        }
-    %>
-
+   <%@include file="navbar.jsp" %> 
+	<h2> </h2><br>
+<img src="<%= tip %>" alt="Menu Image" style="width:600px; height:auto;"/><br>
+<img src="<%= e_ %>" alt="Menu Image" style="width:600px; height:auto;"/>
+    
+  
 </body>
 </html>
