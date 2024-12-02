@@ -30,7 +30,10 @@ margin-top: 80px;
             <c:forEach var="i" begin="1" end="12">
                 <tr>
                     <td>${i}교시</td>
-                    <c:forEach var="day" items="${['월', '화', '수', '목', '금']}">
+                    <script>
+					    const days = ['월', '화', '수', '목', '금'];
+					</script>
+                    <c:forEach var="day" items="${days}">
                         <td>
                             <c:out value="${timetable[day][i - 1]}" default="-"/>
                         </td>

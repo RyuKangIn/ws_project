@@ -1,0 +1,178 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="com.wsp.useclass.*" %>
+<%@ page import="java.sql.Connection, java.sql.DriverManager, java.sql.PreparedStatement, java.sql.ResultSet, java.util.ArrayList, java.util.List" %>
+<%@ page import="java.io.PrintWriter" %>
+<%
+
+    // DB 연결 설정
+    String dbURL = "jdbc:mysql://localhost:3306/ws_db";
+    String dbUser = "wsp";
+    String dbPassword = "1234";
+    Connection conn = null;
+    List<Post> postList = new ArrayList<>();
+
+    // 게시글 목록 불러오기
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+        String query = "SELECT id, title, content, user_nickname FROM posts";
+        PreparedStatement pstmt = conn.prepareStatement(query);
+        ResultSet rs = pstmt.executeQuery();
+
+        while (rs.next()) {
+            Post post = new Post();
+            post.setId(rs.getString("id"));
+            post.setTitle(rs.getString("title"));
+            post.setContent(rs.getString("content"));
+            post.setNickname(rs.getString("user_nickname"));
+            postList.add(post);
+        }
+        request.setAttribute("postList", postList);
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .post-form {
+            margin-bottom: 20px;
+        }
+        .post {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .post-title {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .post-content {
+            margin-top: 5px;
+        }
+        #navbar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        #navbar button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 0 15px;
+        }
+        #navbar button:hover {
+            text-decoration: underline;
+        }
+        #navbar .auth-buttons {
+            margin-left: auto;
+        }
+        .post-list {
+            margin-bottom: 20px;
+        }
+        .post-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .post-item:hover {
+            background-color: #f0f0f0;
+        }
+        #toggle-button:hover {
+            background-color: #0056b3;
+        }
+        #add-post-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar">
+        <button onclick="location.href='#'">홈</button>
+        <button onclick="location.href='#'">게시판</button>
+        <button onclick="location.href='#'">시간표</button>
+        <button onclick="location.href='#'">학식</button>
+        <button onclick="location.href='#'">대화</button>
+        <div class="auth-buttons">
+            <button onclick="location.href='#'">로그인</button>
+            <button onclick="location.href='#'">로그아웃</button>
+        </div>
+    </div>
+    <h1>게시판</h1>
+    <div>
+        <button type="button" onclick="location.href='content_create.jsp'" id="toggle-button" style="padding: 10px 20px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">게시글 작성</button>
+    </div>
+    
+    <div class="search-form" style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
+        <input type="text" id="search-input" placeholder="게시글 검색" style="flex: 1; padding: 10px; font-size: 16px;">
+        <button onclick="searchPosts()" style="padding: 10px 20px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">검색</button>
+    </div>
+    
+    <div id="post-list" class="post-list">
+        <h2>게시글 리스트</h2>
+        <c:forEach var="post" items="${postList}">
+            <div class="post-item" onclick="location.href='content_board.jsp?post_id=${post.id}'">
+                <span class="post-title">${post.title}</span> - <span class="post-content">${post.nickname}</span>
+            </div>
+        </c:forEach>
+    </div>
+
+    <script>
+        function togglePostForm() {
+            const postForm = document.querySelector('.post-form');
+            const postFormBtn = document.getElementById('add-post-button');
+            const toggleButton = document.getElementById('toggle-button');
+            if (postForm.style.display === 'none') {
+                postForm.style.display = 'block';
+                postFormBtn.style.display = 'block';
+                toggleButton.textContent = '작성 취소';
+                
+            } else {
+                postForm.style.display = 'none';
+                postFormBtn.style.display = 'none';
+                toggleButton.textContent = '게시글 작성';
+                
+            }
+        }
+    </script>
+    <script>
+        function searchPosts() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const posts = document.querySelectorAll('.post-item');
+            posts.forEach(post => {
+                if (post.textContent.toLowerCase().includes(searchTerm)) {
+                    post.style.display = 'block';
+                } else {
+                    post.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
