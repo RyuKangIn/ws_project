@@ -79,4 +79,35 @@
     <servlet-name>controlLogout</servlet-name>
     <url-pattern>/logout</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>controlDeleteTimeTable</display-name>
+    <servlet-name>controlDeleteTimeTable</servlet-name>
+    <servlet-class>controlDeleteTimeTable</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>controlDeleteTimeTable</servlet-name>
+    <url-pattern>/deletetimetable</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>controlUpdateNickname</display-name>
+    <servlet-name>controlUpdateNickname</servlet-name>
+    <servlet-class>controlUpdateNickname</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>controlUpdateNickname</servlet-name>
+    <url-pattern>/updatenickname</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>controlMypage</display-name>
+    <servlet-name>controlMypage</servlet-name>
+    <servlet-class>controlMypage</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>controlMypage</servlet-name>
+    <url-pattern>/mypage</url-pattern>
+  </servlet-mapping>
+  
 </web-app>

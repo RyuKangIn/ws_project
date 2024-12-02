@@ -28,15 +28,21 @@ margin-top: 80px;
                 <th>금</th>
             </tr>
             <c:forEach var="i" begin="1" end="12">
-                <tr>
-                    <td>${i}교시</td>
-                    <c:forEach var="day" items="${['월', '화', '수', '목', '금']}">
-                        <td>
-                            <c:out value="${timetable[day][i - 1]}" default="-"/>
-                        </td>
-                    </c:forEach>
-                </tr>
-            </c:forEach>
+    <tr>
+        <td>${i}교시</td>
+        <c:forEach var="day" items="${['월', '화', '수', '목', '금']}">
+            <td>
+                <c:if test="${timetable[day][i - 1] != '-'}">
+    				<a href="/ws_project/deletetimetable?day=${day}&lec_name=${timetable[day][i - 1]}" 
+       					onclick="return confirm('${day}요일에 등록된 ${timetable[day][i - 1]}(을)를 삭제하시겠습니까?');">
+        				${timetable[day][i - 1]}
+   					</a>
+				</c:if>
+
+            </td>
+        </c:forEach>
+    </tr>
+</c:forEach>
         </table>
     </div>
 

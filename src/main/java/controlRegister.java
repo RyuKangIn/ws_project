@@ -6,14 +6,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.mindrot.jbcrypt.BCrypt;
+
 
 public class controlRegister extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // 데이터베이스 연결 정보
     private static final String DB_URL = "jdbc:mysql://localhost:3306/ws_db"; // 데이터베이스 이름 변경
-    private static final String DB_USER = "root";                                   // 사용자 이름
-    private static final String DB_PASSWORD = "alslvk123";                          // 비밀번호
+    private static final String DB_USER = "wsp";                                   // 사용자 이름
+    private static final String DB_PASSWORD = "1234";                          // 비밀번호
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -33,12 +35,13 @@ public class controlRegister extends HttpServlet {
 
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             Class.forName("com.mysql.cj.jdbc.Driver");
-
+            // 비밀번호 해싱
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
             // 데이터베이스에 사용자 정보 삽입
             String query = "INSERT INTO users (username, password, nickname) VALUES (?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, username);
-                stmt.setString(2, password); // 비밀번호는 암호화해서 저장하는 것이 권장됩니다.
+                stmt.setString(2, hashedPassword); 
                 stmt.setString(3, nickname);
                 stmt.executeUpdate();
             }

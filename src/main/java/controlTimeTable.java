@@ -18,9 +18,9 @@ import java.util.*;
 
 public class controlTimeTable extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final String DB_URL = "jdbc:mysql://localhost:3306/ws_db?useSSL=false&serverTimezone=UTC";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "alslvk123";
+	private static final String DB_URL = "jdbc:mysql://localhost:3306/ws_db";
+    private static final String DB_USER = "wsp";
+    private static final String DB_PASSWORD = "1234";
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -33,8 +33,12 @@ public class controlTimeTable extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	 // 세션 가져오기
         HttpSession session = request.getSession(false);
-
+        if (session == null || session.getAttribute("user_id") == null) {
+            response.sendRedirect("/ws_project/viewLogin.jsp");
+            return;
+        }
         int user_id = (int) session.getAttribute("user_id");
         Map<String, ArrayList<String>> timetable = new HashMap<>();
         String[] days = {"월", "화", "수", "목", "금"};
@@ -76,7 +80,7 @@ public class controlTimeTable extends HttpServlet {
         }
 
         // JSP에 데이터 전달
-        request.setAttribute("timetable", timetable);
+        session.setAttribute("timetable", timetable);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/viewTimeTable.jsp");
         dispatcher.forward(request, response);
     }

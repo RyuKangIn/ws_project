@@ -13,9 +13,9 @@ public class checkDupID extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // 데이터베이스 연결 정보
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/ws_db?useSSL=false&serverTimezone=UTC";
-    private static final String DB_USER = "root";           // MySQL 사용자 이름
-    private static final String DB_PASSWORD = "alslvk123"; // MySQL 비밀번호
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/ws_db";
+    private static final String DB_USER = "wsp";           // MySQL 사용자 이름
+    private static final String DB_PASSWORD = "1234"; // MySQL 비밀번호
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
