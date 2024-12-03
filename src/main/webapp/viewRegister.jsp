@@ -10,39 +10,56 @@
     	let isDuplicateChecked = false; // 중복 확인 여부를 추적
 
     
-        function checkDuplicate() {
-        	const username = document.querySelector('input[name="username"]').value;
-            if (!username) {
-                alert('아이디를 입력하세요.');
-                return;
-            }
-
-         // EL 영향을 받지 않도록 " 대신 '를 사용하거나 이스케이프 처리
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", "/ws_project/checkduplicateid?username=" + encodeURIComponent(username), true);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    if (xhr.responseText === 'true') {
-                        alert('이미 존재하는 아이디입니다.');
-                    } else {
-                        alert('사용 가능한 아이디입니다.');
-                        isDuplicateChecked = true; // 중복 확인 완료
-                    }
-                }
-            };
-            xhr.send();
-        }
-
+    	function checkDuplicate() {
+    	    const username = document.querySelector('input[name="username"]').value;
+    	    if (!username) {
+    	        alert('아이디를 입력하세요.');
+    	        return;
+    	    }
+    	    if (/\s/.test(username)) { // 공백이 포함되어 있는지 검사 (정규식 사용)
+    	        alert('아이디에 공백을 포함할 수 없습니다.');
+    	        return;
+    	    }
+    	    const xhr = new XMLHttpRequest();
+    	    xhr.open("GET", "/ws_project/checkduplicateid?username=" + encodeURIComponent(username), true);
+    	    xhr.onreadystatechange = function () {
+    	        if (xhr.readyState === 4 && xhr.status === 200) {
+    	            if (xhr.responseText === 'true') {
+    	                alert('이미 존재하는 아이디입니다.');
+    	            } else {
+    	                alert('사용 가능한 아이디입니다.');
+    	                isDuplicateChecked = true; // 중복 확인 완료
+    	            }
+    	        }
+    	    };
+    	    xhr.send();
+    	}
+    	// 아이디 입력 시 중복 확인 상태 초기화
+    	document.querySelector('input[name="username"]').addEventListener('input', function () {
+    	    isDuplicateChecked = false;
+    	});
         function validateForm(event) {
+            const username = document.querySelector('input[name="username"]').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
-         	// 아이디 중복 확인 여부 확인
+
+            // 아이디 중복 확인 여부 확인
             if (!isDuplicateChecked) {
                 event.preventDefault();
                 alert('아이디 중복 확인을 해주세요.');
                 return false;
             }
-         	
+
+            // 공백 확인 정규식
+            const whitespaceRegex = /\s/;
+
+
+            if (whitespaceRegex.test(password)) {
+                event.preventDefault();
+                alert('비밀번호에 공백이 포함될 수 없습니다.');
+                return false;
+            }
+
             if (password !== confirmPassword) {
                 event.preventDefault();
                 alert('비밀번호가 일치하지 않습니다.');

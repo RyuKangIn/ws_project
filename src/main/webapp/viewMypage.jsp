@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
 <!DOCTYPE html>
 <html>
 <head>
@@ -61,49 +62,59 @@
             display: inline;
         }
     </style>
-<script>
-        function editNickname() {
-            const nicknameElement = document.querySelector('.nickname-container');
-            const currentNickname = document.getElementById('nicknameText').textContent;
-            const inputHTML = `<input type='text' id='nicknameInput' value='${currentNickname}'> <button onclick='saveNickname()'>확인</button>`;
-            nicknameElement.innerHTML = `<strong>닉네임</strong>: ${inputHTML}`;
-        }
-        
-        function saveNickname() {
-            const newNickname = document.getElementById('nicknameInput').value;
-            const nicknameElement = document.querySelector('.nickname-container');
-            nicknameElement.innerHTML = `
-                    <p><strong>닉네임</strong>: </p> 
-                    <p id="nicknameText">${newNickname}</p>
-                    <button style="display: inline; margin-left: 10px;" onclick="editNickname()">수정</button>`;
-        }
-    </script>
+
 </head>
 <body>
-	<%@include file="navbar.jsp"%> 
+    <%@include file="navbar.jsp"%> 
     <div class="container">
         <div class="header">
             <h1>마이 페이지</h1>
         </div>
         <div class="profile-info">
             <div class="info">
-                <h2>홍길동</h2>
-                <div class="nickname-container">
-                    <p><strong>닉네임</strong>: </p> 
-                    <p id="nicknameText">프로게이머123</p>
-                    <button style="display: inline; margin-left: 10px;" onclick="editNickname()">수정</button>
+                <div id="nicknameDisplay">
+                    <span><strong>닉네임</strong>: </span>
+                    <span id="nicknameText">${nickname}</span>
+                    <button id="editButton" style="margin-left: 10px;" onclick="editNickname()">수정</button>
                 </div>
+                <!-- 닉네임 수정 폼 -->
+                <form id="nicknameForm" style="display: none;" action="/ws_project/updatenickname" method="post">
+                    <input type="hidden" name="user_id" value="${sessionScope.user_id}">
+                    <label for="nicknameInput">닉네임:</label>
+                    <input type="text" id="nicknameInput" name="nickname" value="${nickname}" required>
+                    <button type="submit">저장</button>
+                    <button type="button" onclick="cancelEdit()">취소</button>
+                </form>
             </div>
         </div>
         <hr>
         <div class="posts">
             <h3>내 게시물</h3>
             <ul>
-                <li>게시물 1: 오늘의 프로그래밍 일기</li>
-                <li>게시물 2: 보드게임 Space Crew 후기</li>
-                <li>게시물 3: 리그 오브 레전드 플레이 전략 공유</li>
+                <c:forEach var="post" items="${userPosts}">
+                    <li>
+                        <a href="/ws_project/viewPost?postId=${post.postId}">
+                            ${post.title}
+                        </a>
+                    </li>
+                </c:forEach>
             </ul>
         </div>
     </div>
+    <script>
+        function editNickname() {
+            // 닉네임 텍스트와 수정 버튼 숨기기
+            document.getElementById('nicknameDisplay').style.display = 'none';
+            // 닉네임 수정 폼 보이기
+            document.getElementById('nicknameForm').style.display = 'block';
+        }
+        
+        function cancelEdit() {
+            // 닉네임 텍스트와 수정 버튼 보이기
+            document.getElementById('nicknameDisplay').style.display = 'block';
+            // 닉네임 수정 폼 숨기기
+            document.getElementById('nicknameForm').style.display = 'none';
+        }
+    </script>
 </body>
 </html>

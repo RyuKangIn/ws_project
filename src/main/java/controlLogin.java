@@ -9,15 +9,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
+import org.mindrot.jbcrypt.BCrypt; // BCrypt 라이브러리 추가
 
 public class controlLogin extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // DB 연결 정보
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/ws_db?useSSL=false&serverTimezone=UTC";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "alslvk123";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/ws_db";
+    private static final String DB_USER = "wsp";
+    private static final String DB_PASSWORD = "1234";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -25,24 +25,29 @@ public class controlLogin extends HttpServlet {
         String password = request.getParameter("password");
         boolean loginSuccess = false;
 
-        // DB에서 아이디와 비밀번호 확인
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-                String query = "SELECT user_id FROM users WHERE username = ? AND password = ?";
+                // 사용자 이름으로 암호화된 비밀번호 조회
+                String query = "SELECT user_id, password FROM users WHERE username = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
                     stmt.setString(1, username);
-                    stmt.setString(2, password);
 
                     try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next() && rs.getInt(1) > 0) {
-                            loginSuccess = true; // 로그인 성공
+                        if (rs.next()) {
                             int userId = rs.getInt("user_id");
-                            HttpSession session = request.getSession();
-                            session.setAttribute("user_id", userId);
-                            System.out.println("Session ID: " + session.getId());
-                            System.out.println("User ID in session: " + session.getAttribute("user_id"));
+                            String storedHashedPassword = rs.getString("password");
 
+                            // 사용자가 입력한 비밀번호와 데이터베이스의 해시된 비밀번호 비교
+                            if (BCrypt.checkpw(password, storedHashedPassword)) {
+                                loginSuccess = true;
+
+                                // 세션 생성 및 사용자 정보 저장
+                                HttpSession session = request.getSession();
+                                session.setAttribute("user_id", userId);
+                                System.out.println("Session ID: " + session.getId());
+                                System.out.println("User ID in session: " + session.getAttribute("user_id"));
+                            }
                         }
                     }
                 }
