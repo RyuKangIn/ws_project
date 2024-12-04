@@ -168,7 +168,7 @@ System.out.println("Received post_id: " + request.getParameter("post_id"));
             request.setAttribute("post_user_id", rs.getString("user_id"));
         }
         
-        query = "SELECT id, user_id, user_nickname, content FROM comment WHERE post_id = ?";
+        query = "SELECT id, user_id, user_nickname, content, created_at FROM comment WHERE post_id = ?";
         stmt = conn.prepareStatement(query);
         stmt.setInt(1, Integer.parseInt(request.getParameter("post_id")));
         rs = stmt.executeQuery();
@@ -178,7 +178,8 @@ System.out.println("Received post_id: " + request.getParameter("post_id"));
                 rs.getInt("id"),             // 댓글 ID
                 rs.getInt("user_id"),        // 작성자 ID
                 rs.getString("user_nickname"), // 작성자 닉네임
-                rs.getString("content")      // 댓글 내용
+                rs.getString("content"),      // 댓글 내용
+                rs.getString("created_at")      // 댓글 내용
             );
             commentList.add(comment);
         }
@@ -236,7 +237,7 @@ System.out.println("Received post_id: " + request.getParameter("post_id"));
     %>
     <div class="comment">
         <div class="comment-meta">
-            작성자: <%= comment.getAuthor() %>
+            작성자: <%= comment.getAuthor() %> | 작성일: <%= comment.getCreatedAt() %>
         </div>
         <p><%= comment.getContent() %></p>
         <% if (sessionUserId != null && sessionUserId.equals(String.valueOf(comment.getUserId()))) { %>

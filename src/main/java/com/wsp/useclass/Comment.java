@@ -8,13 +8,15 @@ public class Comment {
     private int userId; // 댓글 작성자의 ID
     private String author; // 댓글 작성자 이름 또는 닉네임
     private String content; // 댓글 내용
+    private String created_at;
 
     // 생성자
-    public Comment(int id, int userId, String author, String content) {
+    public Comment(int id, int userId, String author, String content, String created_at) {
         this.id = id;
         this.userId = userId;
         this.author = author;
         this.content = content;
+        this.created_at = created_at;
     }
 
     // ID getter
@@ -55,5 +57,14 @@ public class Comment {
     // 내용 setter
     public void setContent(String content) {
         this.content = content;
+    }
+    // 내용 getter
+    public String getCreatedAt() {
+        return created_at;
+    }
+
+    // 내용 setter
+    public void setCreatedAt(String created_at) {
+        this.created_at = created_at;
     }
 }
