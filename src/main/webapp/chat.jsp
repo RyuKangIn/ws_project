@@ -9,22 +9,22 @@
     PreparedStatement pstmt = null;
     ResultSet rs = null;
     String destUserId = request.getParameter("dest_id");
+    String userId = String.valueOf( session.getAttribute("user_id"));
+    String sql;
+    
     List<chat> chatList = new ArrayList<>();
     List<chat> userList = new ArrayList<>();
     
     try {
         Class.forName("com.mysql.cj.jdbc.Driver");
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/ws_db", "wsp", "1234");
-        String sql;
-        
-        int userId = (int) request.getSession().getAttribute("user_id");
 
         sql = "SELECT DISTINCT CASE WHEN source_user_id = ? THEN dest_user_id ELSE source_user_id END AS other_user_id, CASE WHEN source_user_id = ? THEN dest_user_nickname ELSE source_user_nickname END AS other_user_nickname FROM chat WHERE source_user_id = ? OR dest_user_id = ?";
         pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, userId);
-        pstmt.setInt(2, userId);
-        pstmt.setInt(3, userId);
-        pstmt.setInt(4, Integer.parseInt(destUserId));
+        pstmt.setString(1, userId);
+        pstmt.setString(2, userId);
+        pstmt.setString(3, userId);
+        pstmt.setString(4, userId);
         
         rs = pstmt.executeQuery();
 
@@ -38,10 +38,10 @@
         
         sql = "SELECT DISTINCT source_user_id, dest_user_id, source_user_nickname, dest_user_nickname, content FROM chat WHERE (source_user_id = ? AND dest_user_id = ?) OR (source_user_id = ? AND dest_user_id = ?)";
         pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, "1");
+        pstmt.setString(1, userId);
         pstmt.setString(2, destUserId);
         pstmt.setString(3, destUserId);
-        pstmt.setString(4, "1");
+        pstmt.setString(4, userId);
         
         rs = pstmt.executeQuery();
         while (rs.next()) {
@@ -95,7 +95,7 @@
         <div id="chat-window" class="chat-window">
             <%
                 for (chat c : chatList) {
-                    if (c.source_user_id.equals("1")) {
+                    if (c.source_user_id.equals(userId)) {
                         out.println("<div class='message user-message'>" + c.content + "</div>");
                     } else {
                         out.println("<div class='message bot-message'>" + c.content + "</div>");
@@ -156,7 +156,8 @@
                     window.location.reload(true);
                 }
             };
-            xhr.send("source_user_id=1&dest_user_id=" + encodeURIComponent(destUserId) + "&content=" + encodeURIComponent(message));
+            var userId = "<%= userId %>";
+            xhr.send("source_user_id=" + userId + "&dest_user_id=" + encodeURIComponent(destUserId) + "&content=" + encodeURIComponent(message));
         }
 
         function searchUser() {
@@ -165,7 +166,7 @@
 
             // 서버에 요청 보내기
             const xhr = new XMLHttpRequest();
-            xhr.open("GET", "searchUser.jsp?username=" + encodeURIComponent(searchTerm), true);
+            xhr.open("GET", "searchUser.jsp?nickname=" + encodeURIComponent(searchTerm), true);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     const userId = xhr.responseText.trim();

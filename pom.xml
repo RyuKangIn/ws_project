@@ -43,6 +43,21 @@
     <version>0.4</version>
 </dependency>
 
+<!-- Jakarta JSP API -->
+<dependency>
+    <groupId>jakarta.servlet.jsp</groupId>
+    <artifactId>jakarta.servlet.jsp-api</artifactId>
+    <version>3.1.0</version>
+    <scope>provided</scope>
+</dependency>
+
+<!-- Jakarta Tag Libraries -->
+<dependency>
+    <groupId>jakarta.servlet.jsp.jstl</groupId>
+    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+    <version>2.0.0</version>
+</dependency>
+
 <!-- https://mvnrepository.com/artifact/org.glassfish.web/jakarta.servlet.jsp.jstl -->
 <dependency>
 	<groupId>org.glassfish.web</groupId>

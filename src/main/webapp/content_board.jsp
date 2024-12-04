@@ -3,6 +3,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import="com.wsp.useclass.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="custom" %>
 <%@ page import="java.sql.Connection, java.sql.DriverManager, java.sql.PreparedStatement, java.sql.ResultSet, java.util.ArrayList, java.util.List" %>
 <!DOCTYPE html>
 <head>
@@ -201,25 +202,44 @@ System.out.println("Received post_id: " + request.getParameter("post_id"));
         </section>
         
         <c:if test="${sessionScope.user_id == requestScope.post_user_id}">
-	        <div class="post-buttons">
-	            <button type="button" onclick="location.href='content_edit.jsp?post_id=<%= request.getParameter("post_id") %>'">수정</button>
-	            <button type="button" class="delete" onclick="deletePost(<%= request.getParameter("post_id") %>)">삭제</button>
-        </c:if>
+		    <div class="post-buttons">
+		        <button type="button" onclick="location.href='content_edit.jsp?post_id=<%= request.getParameter("post_id") %>'">수정</button>
+		        <button type="button" class="delete" onclick="deletePost('<%= request.getParameter("post_id") %>', '<%= session.getAttribute("user_id") %>')">삭제</button>
+		    </div>
+		</c:if>
 <script>
-    function deletePost(postId) {
-        if (confirm('정말 삭제하시겠습니까?')) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '<%= request.getRequestURI() %>?post_id=' + postId;
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'action';
-            input.value = 'delete';
-            form.appendChild(input);
-            document.body.appendChild(form);
-            form.submit();
-        }
+function deletePost(postId, userId) {
+    if (postId == null || postId === 'undefined' || userId == null || userId === 'undefined') {
+        console.error('Invalid postId or userId:', postId, userId);
+        alert('잘못된 게시글 정보입니다.');
+        return;
     }
+
+    if (confirm('정말 삭제하시겠습니까?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'deletePost.java'; // deletePost.java로 요청을 보냅니다.
+
+        // post_id를 폼에 추가
+        const postIdInput = document.createElement('input');
+        postIdInput.type = 'hidden';
+        postIdInput.name = 'post_id';
+        postIdInput.value = postId;
+
+        // user_id를 폼에 추가
+        const userIdInput = document.createElement('input');
+        userIdInput.type = 'hidden';
+        userIdInput.name = 'user_id';
+        userIdInput.value = userId;
+
+        form.appendChild(postIdInput);
+        form.appendChild(userIdInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+
 </script>
         </div>
     </article>
@@ -237,7 +257,7 @@ System.out.println("Received post_id: " + request.getParameter("post_id"));
     %>
     <div class="comment">
         <div class="comment-meta">
-            작성자: <%= comment.getAuthor() %> | 작성일: <%= comment.getCreatedAt() %>
+       		<custom:displayPost comment="<%= comment %>" />
         </div>
         <p><%= comment.getContent() %></p>
         <% if (sessionUserId != null && sessionUserId.equals(String.valueOf(comment.getUserId()))) { %>

@@ -3,8 +3,8 @@
 <%@ page import="com.wsp.useclass.*" %>
 <%@ page import="java.sql.Connection, java.sql.DriverManager, java.sql.PreparedStatement, java.sql.ResultSet, java.util.ArrayList, java.util.List" %>
 <%@ page import="java.io.PrintWriter" %>
+<%@ taglib uri="/WEB-INF/tags/PostListTagHandler.tld" prefix="pl" %>
 <%
-
     // DB 연결 설정
     String dbURL = "jdbc:mysql://localhost:3306/ws_db";
     String dbUser = "wsp";
@@ -30,7 +30,7 @@
         }
         request.setAttribute("postList", postList);
     } catch (Exception e) {
-        e.printStackTrace(); 
+        e.printStackTrace();
     } finally {
         if (conn != null) {
             try {
@@ -75,8 +75,8 @@
         .post-content {
             margin-top: 5px;
         }
-         #navbar {
-        	width: 100%;
+        #navbar {
+            width: 100%;
             position: fixed;
             top: 0;
             left: 0;
@@ -137,13 +137,11 @@
     
     <div id="post-list" class="post-list">
         <h2>게시글 리스트</h2>
-        <c:forEach var="post" items="${postList}">
-            <div class="post-item" onclick="location.href='content_board.jsp?post_id=${post.id}'">
-                <span class="post-title">${post.title}</span> - <span class="post-content">${post.nickname}</span>
-            </div>
-        </c:forEach>
+        <pl:postList/>
+        <%--<c:forEach var="post" items="${postList}">
+            <custom:displayPost post="${post}" />
+        </c:forEach> --%>
     </div>
-
     
     <script>
         function searchPosts() {

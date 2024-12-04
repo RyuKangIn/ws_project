@@ -14,7 +14,7 @@
 
     // 요청 파라미터로부터 사용자 ID를 가져옴
     String destUserId = request.getParameter("dest_user_id");
-    String sourceUserId = "1";  // 현재 사용자의 ID가 1이라고 가정
+    String sourceUserId = String.valueOf(session.getAttribute("user_id"));  // 현재 사용자의 ID가 1이라고 가정
     
     try {
         // 데이터베이스 연결
