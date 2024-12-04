@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="com.wsp.useclass.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.sql.Connection, java.sql.DriverManager, java.sql.PreparedStatement, java.sql.ResultSet, java.util.ArrayList, java.util.List" %>
 <!DOCTYPE html>
 <head>
@@ -155,7 +156,7 @@ System.out.println("Received post_id: " + request.getParameter("post_id"));
     try {
         Class.forName("com.mysql.cj.jdbc.Driver");
         conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
-        String query = "SELECT title, content, user_nickname FROM posts WHERE id = ?";
+        String query = "SELECT user_id, title, content, user_nickname, created_at FROM posts WHERE id = ?";
         stmt = conn.prepareStatement(query);
         stmt.setInt(1, Integer.parseInt(request.getParameter("post_id")));
         rs = stmt.executeQuery();
@@ -163,6 +164,8 @@ System.out.println("Received post_id: " + request.getParameter("post_id"));
             request.setAttribute("postTitle", rs.getString("title"));
             request.setAttribute("postContent", rs.getString("content"));
             request.setAttribute("author", rs.getString("user_nickname"));
+            request.setAttribute("postDate", rs.getString("created_at"));
+            request.setAttribute("post_user_id", rs.getString("user_id"));
         }
         
         query = "SELECT user_nickname, content FROM comment WHERE post_id = ?";
@@ -184,15 +187,16 @@ System.out.println("Received post_id: " + request.getParameter("post_id"));
 %>
 <%= request.getAttribute("postTitle") %>
 </h1>
-            <p class="post-meta">작성자: <%= request.getAttribute("author") %> <%--| 작성일: <%= request.getAttribute("postDate") %> --%></p>
+            <p class="post-meta">작성자: <%= request.getAttribute("author") %> | 작성일: <%= request.getAttribute("postDate") %></p>
         </header>
         <section class="post-content">
 <p><%= request.getAttribute("postContent") %></p>
         </section>
-        
-        <div class="post-buttons">
-            <button type="button" onclick="location.href='content_edit.jsp?post_id=<%= request.getParameter("post_id") %>'">수정</button>
-            <button type="button" class="delete" onclick="deletePost(<%= request.getParameter("post_id") %>)">삭제</button>
+        <c:if test="${sessionScope.user_id == requestScope.post_user_id}">
+	        <div class="post-buttons">
+	            <button type="button" onclick="location.href='content_edit.jsp?post_id=<%= request.getParameter("post_id") %>'">수정</button>
+	            <button type="button" class="delete" onclick="deletePost(<%= request.getParameter("post_id") %>)">삭제</button>
+        </c:if>
 <script>
     function deletePost(postId) {
         if (confirm('정말 삭제하시겠습니까?')) {
@@ -261,7 +265,7 @@ System.out.println("Received post_id: " + request.getParameter("post_id"));
             String postId = request.getParameter("postId");
             String userId = (String) session.getAttribute("userId");
             if (userId == null) {
-                userId = "1";  // 기본 사용자 ID 설정
+                return;  // 기본 사용자 ID 설정
             }  // 사용자 ID는 세션에서 가져온다고 가정
 
             String userNickname;
