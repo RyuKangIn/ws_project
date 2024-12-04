@@ -81,8 +81,7 @@ public class controlTimeTable extends HttpServlet {
 
         // JSP에 데이터 전달
         session.setAttribute("timetable", timetable);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/viewTimeTable.jsp");
-        dispatcher.forward(request, response);
+        response.sendRedirect("/ws_project/viewTimeTable.jsp");
     }
 
 

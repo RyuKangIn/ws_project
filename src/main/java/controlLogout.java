@@ -1,11 +1,7 @@
 
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
+import jakarta.servlet.http.*;
 import java.io.IOException;
 
 /**
@@ -32,6 +28,17 @@ public class controlLogout extends HttpServlet {
             // 세션 무효화
             session.invalidate();
         }
+        // 클라이언트 쿠키 삭제 
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                cookie.setValue("");
+                cookie.setPath("/"); // 애플리케이션 전체에 대해 적용
+                cookie.setMaxAge(0); // 즉시 만료
+                response.addCookie(cookie);
+            }
+        }
+        
 		response.sendRedirect("/ws_project/viewLogin.jsp");
 	}
 

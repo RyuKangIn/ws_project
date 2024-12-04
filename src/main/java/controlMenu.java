@@ -30,7 +30,7 @@ public class controlMenu extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            boolean needsUpdate = checkAndUpdateMenu();
+            checkAndUpdateMenu();
 
             // 업데이트 후 바로 viewMenu.jsp로 포워드
             RequestDispatcher dispatcher = request.getRequestDispatcher("/viewMenu.jsp");
