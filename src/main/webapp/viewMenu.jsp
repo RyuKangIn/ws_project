@@ -28,7 +28,9 @@ try (Connection conn = DriverManager.getConnection(dbUrl, username, password)) {
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>학식 메뉴 조회</title>
+
 <link rel="stylesheet" type="text/css" href="/ws_project/NewFile.css"/>
 <style>
 body {		
@@ -37,6 +39,7 @@ body {
             font-family: Arial, sans-serif;
             text-align: center;
         }
+       
         h2 {
             margin-top: 80px; /* 네비게이션 바 아래 공간 확보 */
         }
@@ -44,7 +47,7 @@ body {
 </head>
 <body>
 
-   <%@include file="navbar.jsp" %> 
+   <header><%@include file="navbar.jsp" %> </header>
 	<h2> </h2><br>
 <img src="<%= tip %>" alt="Menu Image" style="width:600px; height:auto;"/><br>
 <img src="<%= e_ %>" alt="Menu Image" style="width:600px; height:auto;"/>

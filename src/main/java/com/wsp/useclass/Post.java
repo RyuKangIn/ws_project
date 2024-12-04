@@ -1,16 +1,23 @@
 package com.wsp.useclass;
 
 public class Post {
-	private String id;
+	private int id;
     private String title;
     private String content;
     private String nickname;
-
-    public String getId() {
+    
+    public Post() {
+    	
+    }
+    public Post(int pid, String title) {
+    	this.id= pid;
+    	this.title=title;
+    }
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

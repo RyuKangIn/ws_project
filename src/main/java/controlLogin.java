@@ -29,7 +29,7 @@ public class controlLogin extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
             try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
                 // 사용자 이름으로 암호화된 비밀번호 조회
-                String query = "SELECT user_id, password FROM users WHERE username = ?";
+                String query = "SELECT user_id, password, nickname FROM users WHERE username = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
                     stmt.setString(1, username);
 
@@ -37,6 +37,7 @@ public class controlLogin extends HttpServlet {
                         if (rs.next()) {
                             int userId = rs.getInt("user_id");
                             String storedHashedPassword = rs.getString("password");
+                            String nickname = rs.getString("nickname");
 
                             // 사용자가 입력한 비밀번호와 데이터베이스의 해시된 비밀번호 비교
                             if (BCrypt.checkpw(password, storedHashedPassword)) {
@@ -45,6 +46,7 @@ public class controlLogin extends HttpServlet {
                                 // 세션 생성 및 사용자 정보 저장
                                 HttpSession session = request.getSession();
                                 session.setAttribute("user_id", userId);
+                                session.setAttribute("nickname", nickname);
                                 System.out.println("Session ID: " + session.getId());
                                 System.out.println("User ID in session: " + session.getAttribute("user_id"));
                             }
@@ -61,7 +63,7 @@ public class controlLogin extends HttpServlet {
 
         // 로그인 성공 여부에 따른 처리
         if (loginSuccess) {
-            response.sendRedirect("/ws_project/main.jsp"); 
+            response.sendRedirect("/ws_project/content_list.jsp"); 
         } else {
             response.setContentType("text/html; charset=UTF-8");
             response.getWriter().write("<script>alert('아이디 또는 비밀번호를 다시 확인해주세요.'); history.back();</script>");

@@ -13,8 +13,8 @@ margin-top: 80px;
 
 </head>
 <body> 
-	
-<%@include file="navbar.jsp" %> 
+	<%@include file="navbar.jsp" %>
+
 <div class="main-container">
     <!-- 시간표 -->
     <div class="table-container">

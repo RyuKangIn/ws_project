@@ -9,7 +9,14 @@
     <title>게시글 보기</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <link rel="stylesheet" type="text/css" href="NewFile.css"/> 
     <style>
+    	header {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0 auto;
@@ -17,29 +24,7 @@
             background-color: #f9f9f9;
             color: #333;
         }
-        #navbar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        #navbar button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            margin: 0 15px;
-        }
-        #navbar button:hover {
-            text-decoration: underline;
-        }
-        #navbar .auth-buttons {
-            margin-left: auto;
-        }
+        
         .post-title {
             font-size: 2em;
             margin-bottom: 10px;
@@ -134,20 +119,14 @@
     </style>
 </head>
 <body>
-    <div id="navbar">
-        <button onclick="location.href='content_list.jsp'">홈</button>
-        <button onclick="location.href='schedule.jsp'">시간표</button>
-        <button onclick="location.href='food.jsp'">학식</button>
-        <button onclick="location.href='messages.jsp'">쪽지</button>
-        <div class="auth-buttons">
-            <button onclick="location.href='mypage.jsp'">마이페이지</button>
-            <button onclick="location.href='logout.jsp'">로그아웃</button>
-        </div>
-    </div>
+    <%@include file="navbar.jsp" %> 
+    <br><br><br>
     <article>
 <header>
 <h1 class="post-title">
 <%
+System.out.println("Received post_id: " + request.getParameter("post_id"));
+
 	List<Comment> commentList = new ArrayList<>();
 
     String dbURL = "jdbc:mysql://localhost:3306/ws_db";
@@ -262,7 +241,7 @@
         if (userId == null) {
             userId = "1";  // 기본 사용자 ID 설정
         }  // 사용자 ID는 세션에서 가져온다고 가정
-        String userNickname = (String) session.getAttribute("userNickname");
+        String userNickname = (String) session.getAttribute("nickname");
         if (userNickname == null) {
             userNickname = "손님";  // 기본 사용자 닉네임 설정
         }  // 사용자 닉네임도 세션에서 가져온다고 가정

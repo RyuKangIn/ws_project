@@ -1,5 +1,5 @@
 
-
+import com.wsp.useclass.Post;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+
+import com.wsp.useclass.Post;
 /**
  * Servlet implementation class controlMypage
  */
@@ -31,6 +33,7 @@ public class controlMypage extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 세션에서 user_id 가져오기
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
             response.sendRedirect("/ws_project/viewLogin.jsp");
@@ -38,32 +41,36 @@ public class controlMypage extends HttpServlet {
         }
 
         int userId = (int) session.getAttribute("user_id");
-        List<Post> userPosts = new ArrayList<>();
+
+        List<Map<String, String>> postsData = new ArrayList<>();
         String nickname = null;
-        
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
+
             try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
                 // 닉네임 가져오기
                 String nicknameQuery = "SELECT nickname FROM users WHERE user_id = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(nicknameQuery)) {
-                    stmt.setInt(1, userId);
-                    try (ResultSet rs = stmt.executeQuery()) {
+                try (PreparedStatement nicknameStmt = conn.prepareStatement(nicknameQuery)) {
+                    nicknameStmt.setInt(1, userId);
+                    try (ResultSet rs = nicknameStmt.executeQuery()) {
                         if (rs.next()) {
                             nickname = rs.getString("nickname");
                         }
                     }
                 }
 
-                // 게시물 가져오기
-                String postsQuery = "SELECT post_id, title FROM posts WHERE user_id = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(postsQuery)) {
-                    stmt.setInt(1, userId);
-                    try (ResultSet rs = stmt.executeQuery()) {
+                // 게시물 제목 가져오기
+                String postsQuery = "SELECT id, title FROM posts WHERE user_id = ? ORDER BY id DESC";
+                try (PreparedStatement postsStmt = conn.prepareStatement(postsQuery)) {
+                    postsStmt.setInt(1, userId);
+                    try (ResultSet rs = postsStmt.executeQuery()) {
                         while (rs.next()) {
-                            int postId = rs.getInt("post_id");
-                            String title = rs.getString("title");
-                            userPosts.add(new Post(postId, title));
+                            Map<String, String> post = new HashMap<>();
+                            post.put("id", String.valueOf(rs.getInt("id")));
+                            post.put("title", rs.getString("title"));
+                        
+                            postsData.add(post);
                         }
                     }
                 }
@@ -72,9 +79,9 @@ public class controlMypage extends HttpServlet {
             e.printStackTrace();
         }
 
-        // 닉네임과 게시물 데이터를 JSP에 전달
+        // JSP로 데이터 전달
+        request.setAttribute("postsData", postsData);
         request.setAttribute("nickname", nickname);
-        request.setAttribute("userPosts", userPosts);
         request.getRequestDispatcher("/viewMypage.jsp").forward(request, response);
     }
 
@@ -90,20 +97,20 @@ public class controlMypage extends HttpServlet {
 }
 
 //Post 클래스 
-class Post {
- private int postId;
- private String title;
-
- public Post(int postId, String title) {
-     this.postId = postId;
-     this.title = title;
- }
-
- public int getPostId() {
-     return postId;
- }
-
- public String getTitle() {
-     return title;
- }
-}
+//class Post {
+// private int postId;
+// private String title;
+//
+// public Post(int postId, String title) {
+//     this.postId = postId;
+//     this.title = title;
+// }
+//
+// public int getPostId() {
+//     return postId;
+// }
+//
+// public String getTitle() {
+//     return title;
+// }
+//}

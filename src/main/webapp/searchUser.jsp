@@ -2,7 +2,7 @@
 <%@ page import="java.sql.*" %>
 
 <%
-    String username = request.getParameter("username");
+    String username = request.getParameter("nickname");
     String userId = "";
 
     if (username != null && !username.isEmpty()) {
@@ -14,7 +14,7 @@
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/ws_db", "wsp", "1234");
             
-            String sql = "SELECT user_id FROM users WHERE username = ?";
+            String sql = "SELECT user_id FROM users WHERE nickname = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, username);
 

@@ -4,7 +4,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.wsp.useclass.*" %>
-<%
+<%	
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
@@ -17,13 +17,14 @@
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/ws_db", "wsp", "1234");
         String sql;
         
+        int userId = (int) request.getSession().getAttribute("user_id");
 
         sql = "SELECT DISTINCT CASE WHEN source_user_id = ? THEN dest_user_id ELSE source_user_id END AS other_user_id, CASE WHEN source_user_id = ? THEN dest_user_nickname ELSE source_user_nickname END AS other_user_nickname FROM chat WHERE source_user_id = ? OR dest_user_id = ?";
         pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, "1");
-        pstmt.setString(2, "1");
-        pstmt.setString(3, "1");
-        pstmt.setString(4, "1");
+        pstmt.setInt(1, userId);
+        pstmt.setInt(2, userId);
+        pstmt.setInt(3, userId);
+        pstmt.setInt(4, Integer.parseInt(destUserId));
         
         rs = pstmt.executeQuery();
 
@@ -74,18 +75,8 @@
     
 </head>
 <body>
-    <div id="navbar">
-        <button onclick="location.href='home.jsp'">홈</button>
-        <button onclick="location.href='board.jsp'">게시판</button>
-        <button onclick="location.href='timetable.jsp'">시간표</button>
-        <button onclick="location.href='food.jsp'">학식</button>
-        <button onclick="location.href='chat.jsp'">대화</button>
-        <div class="auth-buttons">
-            <button onclick="location.href='login.jsp'">로그인</button>
-            <button onclick="location.href='logout.jsp'">로그아웃</button>
-        </div>
-    </div>
-
+     <%@include file="navbar.jsp" %> 
+	<br><br><br>
     <h1>채팅 게시판</h1>
     <div id="search-container">
         <input type="text" id="search-user" placeholder="유저 검색...">

@@ -13,7 +13,11 @@
             font-family: Arial, sans-serif;
             overflow: hidden;
         }
-        #navbar {
+         #navbar {
+        	width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -56,19 +60,10 @@
     </style>
 </head>
 <body>
-    <div id="navbar">
-        <button onclick="location.href='content_list.jsp'">홈</button>
-        <button onclick="location.href='board.jsp'">게시판</button>
-        <button onclick="location.href='schedule.jsp'">시간표</button>
-        <button onclick="location.href='food.jsp'">학식</button>
-        <button onclick="location.href='chat.jsp'">대화</button>
-        <div class="auth-buttons">
-            <button onclick="location.href='login.jsp'">로그인</button>
-            <button onclick="location.href='logout.jsp'">로그아웃</button>
-        </div>
-    </div>
+     <%@include file="navbar.jsp" %> 
+     <br><br><br><br>
     <div class="container">
-        <h2 style="text-align: center; font-size: 24px;">게시물 수정</h2>
+        <h2 style="text-align: center; font-size: 24px;"><b>게시물 수정</b></h2>
         <form id="postForm" method="POST" onsubmit="handleFormSubmit(event)">
             <div class="field">
                 <label for="title">제목</label>

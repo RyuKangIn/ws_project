@@ -91,10 +91,10 @@
         <div class="posts">
             <h3>내 게시물</h3>
             <ul>
-                <c:forEach var="post" items="${userPosts}">
+                <c:forEach var="post" items="${postsData}">
                     <li>
-                        <a href="/ws_project/viewPost?postId=${post.postId}">
-                            ${post.title}
+                        <a href="/ws_project/content_board.jsp?post_id=${post.id}">
+                    	${post.title}
                         </a>
                     </li>
                 </c:forEach>

@@ -17,7 +17,7 @@ import java.io.IOException;
 /**
  * Servlet Filter implementation class sessionFilter
  */
-@WebFilter("*.jsp")
+//@WebFilter("*.jsp")
 public class sessionFilter extends HttpFilter implements Filter {
        
     /**

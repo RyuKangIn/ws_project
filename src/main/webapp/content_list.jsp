@@ -16,13 +16,13 @@
     try {
         Class.forName("com.mysql.cj.jdbc.Driver");
         conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
-        String query = "SELECT id, title, content, user_nickname FROM posts";
+        String query = "SELECT id, title, content, user_nickname FROM posts ORDER BY created_at DESC";
         PreparedStatement pstmt = conn.prepareStatement(query);
         ResultSet rs = pstmt.executeQuery();
 
         while (rs.next()) {
             Post post = new Post();
-            post.setId(rs.getString("id"));
+            post.setId(rs.getInt("id"));
             post.setTitle(rs.getString("title"));
             post.setContent(rs.getString("content"));
             post.setNickname(rs.getString("user_nickname"));
@@ -30,7 +30,7 @@
         }
         request.setAttribute("postList", postList);
     } catch (Exception e) {
-        e.printStackTrace();
+        e.printStackTrace(); 
     } finally {
         if (conn != null) {
             try {
@@ -48,6 +48,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게시판</title>
     <style>
+        header {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
         body {
             font-family: Arial, sans-serif;
             max-width: 800px;
@@ -69,7 +75,11 @@
         .post-content {
             margin-top: 5px;
         }
-        #navbar {
+         #navbar {
+        	width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -113,17 +123,8 @@
     </style>
 </head>
 <body>
-    <div id="navbar">
-        <button onclick="location.href='#'">홈</button>
-        <button onclick="location.href='#'">게시판</button>
-        <button onclick="location.href='#'">시간표</button>
-        <button onclick="location.href='#'">학식</button>
-        <button onclick="location.href='#'">대화</button>
-        <div class="auth-buttons">
-            <button onclick="location.href='#'">로그인</button>
-            <button onclick="location.href='#'">로그아웃</button>
-        </div>
-    </div>
+    <%@include file="navbar.jsp" %> 
+    <br><br><br><br>
     <h1>게시판</h1>
     <div>
         <button type="button" onclick="location.href='content_create.jsp'" id="toggle-button" style="padding: 10px 20px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">게시글 작성</button>
@@ -143,24 +144,7 @@
         </c:forEach>
     </div>
 
-    <script>
-        function togglePostForm() {
-            const postForm = document.querySelector('.post-form');
-            const postFormBtn = document.getElementById('add-post-button');
-            const toggleButton = document.getElementById('toggle-button');
-            if (postForm.style.display === 'none') {
-                postForm.style.display = 'block';
-                postFormBtn.style.display = 'block';
-                toggleButton.textContent = '작성 취소';
-                
-            } else {
-                postForm.style.display = 'none';
-                postFormBtn.style.display = 'none';
-                toggleButton.textContent = '게시글 작성';
-                
-            }
-        }
-    </script>
+    
     <script>
         function searchPosts() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
