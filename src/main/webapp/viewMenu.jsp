@@ -4,8 +4,8 @@
 
 <%
 String dbUrl = "jdbc:mysql://localhost:3306/ws_db";
-String username = "root";
-String password = "alslvk123";
+String username = "wsp";
+String password = "1234";
 String tip = null; // 초기화
 String e_ = null;   // 초기화
 Class.forName("com.mysql.cj.jdbc.Driver");
